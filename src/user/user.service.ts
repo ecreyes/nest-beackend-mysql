@@ -17,6 +17,10 @@ export class UserService {
         return this.userRepository.findOne(options)
     }
 
+    public find(options: any): Promise<User[]> {
+        return this.userRepository.find(options)
+    }
+
     public update(id, options) {
         return this.userRepository.update(id, options)
     }
