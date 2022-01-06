@@ -16,4 +16,8 @@ export class UserService {
     public findOne(options: any): Promise<User> {
         return this.userRepository.findOne(options)
     }
+
+    public update(id, options) {
+        return this.userRepository.update(id, options)
+    }
 }
