@@ -86,6 +86,7 @@ export class AuthController {
 
     }
 
+    @UseGuards(AuthGuard)
     @Post('logout')
     async logout(@Res({ passthrough: true }) response: Response) {
         try {
