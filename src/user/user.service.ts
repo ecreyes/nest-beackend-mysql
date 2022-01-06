@@ -9,7 +9,11 @@ export class UserService {
 
     }
 
-    public save(options: any): any {
+    public save(options: any): Promise<User> {
         return this.userRepository.save(options)
+    }
+
+    public findOne(options: any): Promise<User> {
+        return this.userRepository.findOne(options)
     }
 }
