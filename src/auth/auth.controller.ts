@@ -1,4 +1,4 @@
-import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Get, Post, Put, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common'
+import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Get, Post, Put, Req, Res, UnauthorizedException, UseGuards, UseInterceptors } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import * as bycriptjs from 'bcryptjs'
 import { Request, Response } from 'express'
@@ -43,9 +43,11 @@ export class AuthController {
     async login(
         @Body('email') email: string,
         @Body('password') password: string,
-        @Res({ passthrough: true }) response: Response) {
+        @Res({ passthrough: true }) response: Response,
+        @Req() request: Request) {
         try {
             const user = await this.userService.findOne({ email })
+            const is_admin = request.path === '/api/admin/login'
 
             if(!user) throw new BadRequestException('user not found')
 
@@ -53,9 +55,12 @@ export class AuthController {
 
             if(!validPassword) throw new BadRequestException('invalid credentials')
 
+            if(user.is_ambassador && is_admin) throw new UnauthorizedException()
+
             const jwt = await this.jwtService.signAsync({
                 id: user.id,
                 email: user.email,
+                scope: is_admin ? 'admin' : 'ambassador',
             })
 
             response.cookie('jwt', jwt, { httpOnly: true })
