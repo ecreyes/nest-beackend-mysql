@@ -9,7 +9,10 @@ export class LinkController {
     @Get('admin/users/:id/links')
     async all(@Param('id') id:number) {
         try {
-            return await this.linkService.find({ user: id })
+            return await this.linkService.find({
+                user: id,
+                relations: ['orders'],
+            })
         }catch(error) {
             console.log(error)
 

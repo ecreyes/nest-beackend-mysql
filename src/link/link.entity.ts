@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 
+import { Order } from '../order/order.entity'
 import { Product } from '../product/product.entity'
 import { User } from '../user/user.entity'
 
@@ -28,4 +29,13 @@ export class Link {
         },
     })
     products: Product[]
+
+    @OneToMany(() => Order, order => order.link, {
+        createForeignKeyConstraints: false,
+    })
+    @JoinColumn({
+        referencedColumnName: 'code',
+        name: 'code',
+    })
+    orders: Order[]
 }
