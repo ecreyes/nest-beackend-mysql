@@ -1,3 +1,4 @@
+import { Exclude, Expose } from 'class-transformer'
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 
 import { OrderItem } from './order-item.entity'
@@ -20,9 +21,11 @@ export class Order {
     ambassador_email: string
 
     @Column()
+    @Exclude()
     first_name: string
 
     @Column()
+    @Exclude()
     last_name: string
 
     @Column()
@@ -41,8 +44,26 @@ export class Order {
     zip:string
 
     @Column({ default: false })
+    @Exclude()
     complete:boolean
 
     @OneToMany(() => OrderItem, orderItem => orderItem.order)
     order_items: OrderItem[]
+
+    @Expose()
+    get name() {
+        return `${this.first_name} ${this.last_name}`
+    }
+
+    @Expose()
+    get total() {
+        const qttys = this.order_items.map(item => item.admin_revenue)
+        let total = 0
+
+        qttys.forEach(qtty => {
+            total = total + qtty
+        })
+
+        return total
+    }
 }
