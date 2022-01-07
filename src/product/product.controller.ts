@@ -1,13 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common'
+import { Body, CacheInterceptor, CacheKey, CacheTTL, CACHE_MANAGER, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards, UseInterceptors } from '@nestjs/common'
 
 import { AuthGuard } from '../auth/auth.guard'
 
 import { ProductCreateDto } from './dtos/product-create.dto'
 import { ProductService } from './product.service'
+import { Cache } from 'cache-manager'
 
 @Controller()
 export class ProductController {
-    constructor(private productService: ProductService) {
+    constructor(private productService: ProductService, @Inject(CACHE_MANAGER) private cacheManager: Cache) {
 
     }
 
@@ -71,5 +72,23 @@ export class ProductController {
 
             throw error
         }
+    }
+
+    @Get('ambassador/products/frontend')
+    @CacheKey('products_frontend')
+    @CacheTTL(30*60)
+    @UseInterceptors(CacheInterceptor)
+    async frontend() {
+        return this.productService.find({})
+    }
+
+    @Get('ambassador/products/backend')
+    async backend() {
+        let products = await this.cacheManager.get('products_backend')
+        if(!products){
+            products = await this.productService.find({})
+            await this.cacheManager.set('products_backed',products, { ttl: 30* 60})
+        }
+        return products
     }
 }
