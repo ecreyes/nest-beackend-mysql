@@ -1,4 +1,5 @@
 import { Exclude, Expose } from 'class-transformer'
+import { User } from '../user/user.entity'
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 
 import { Link } from '../link/link.entity'
@@ -49,6 +50,11 @@ export class Order {
     @Exclude()
     complete:boolean
 
+    @ManyToOne(()=> User, user => user.orders, {
+        createForeignKeyConstraints: false,
+    })
+    user: User
+
     @OneToMany(() => OrderItem, orderItem => orderItem.order)
     order_items: OrderItem[]
 
@@ -69,6 +75,17 @@ export class Order {
     @Expose()
     get total() {
         const qttys = this.order_items.map(item => item.admin_revenue)
+        let total = 0
+
+        qttys.forEach(qtty => {
+            total = total + qtty
+        })
+
+        return total
+    }
+
+    get ambassadorRevenue(): number {
+        const qttys = this.order_items.map(item => item.ambassador_revenue)
         let total = 0
 
         qttys.forEach(qtty => {

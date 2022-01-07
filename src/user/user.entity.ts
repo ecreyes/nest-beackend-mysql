@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer'
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { Order } from '../order/order.entity'
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity('users')
 export class User {
@@ -21,4 +22,18 @@ export class User {
 
     @Column({ default: true })
     is_ambassador: boolean
+
+    @OneToMany(()=> Order, order => order.user, {
+        createForeignKeyConstraints: false,
+    })
+    orders: Order[]
+
+    get revenue(): number {
+        const ordersComplete = this.orders.filter(order => order.complete)
+        let total = 0;
+        ordersComplete.forEach(order => {
+            total = total + order.ambassadorRevenue
+        })
+        return total
+    }
 }

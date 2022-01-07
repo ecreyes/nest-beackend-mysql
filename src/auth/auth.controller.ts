@@ -81,9 +81,19 @@ export class AuthController {
         try{
             const cookie = request.cookies.jwt
             const { id } = await this.jwtService.verifyAsync(cookie)
-            const user = await this.userService.findOne({ id })
-
-            return user
+            
+            const is_admin_url = request.path === '/api/admin/user'
+            if(is_admin_url){
+                const user = await this.userService.findOne({ id })
+                return user
+            }
+            const user = await this.userService.findOne({
+                 id,
+                 relations: ['orders', 'orders.order_items'] 
+                })
+            const {orders, password, ...data} = user
+            return {...data, revenue: user.revenue}
+            
         }catch(error) {
             console.log(error)
 
