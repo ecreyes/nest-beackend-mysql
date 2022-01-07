@@ -10,17 +10,18 @@ import { RegisterDto } from './dtos/register.dto'
 import { AuthGuard } from './auth.guard'
 
 @UseInterceptors(ClassSerializerInterceptor)
-@Controller('admin')
+@Controller()
 export class AuthController {
 
     constructor(private userService: UserService, private jwtService: JwtService) {
 
     }
 
-    @Post('register')
-    async register(@Body() body: RegisterDto): Promise<User> {
+    @Post(['admin/register','ambassador/register'])
+    async register(@Body() body: RegisterDto, @Req() request: Request): Promise<User> {
         try {
             const { password_confirm, ...data } = body
+            const is_ambassador = request.path === '/api/ambassador/register'
 
             if(body.password !== password_confirm) throw new BadRequestException('Passwords do not match')
 
@@ -29,7 +30,7 @@ export class AuthController {
             return this.userService.save({
                 ...data,
                 password: hashed,
-                is_ambassador: false,
+                is_ambassador,
             })
         }catch (error) {
             console.log(error)
@@ -38,7 +39,7 @@ export class AuthController {
         }
     }
 
-    @Post('login')
+    @Post(['admin/login','ambassador/login'])
     async login(
         @Body('email') email: string,
         @Body('password') password: string,
@@ -69,7 +70,7 @@ export class AuthController {
         }
     }
 
-    @Get('user')
+    @Get(['admin/user','ambassador/user'])
     @UseGuards(AuthGuard)
     async user(@Req() request: Request) {
         try{
@@ -86,7 +87,7 @@ export class AuthController {
 
     }
 
-    @Put('user/info')
+    @Put(['admin/user/info','ambassador/user/info'])
     @UseGuards(AuthGuard)
     async updateInfo(
         @Req() request: Request,
@@ -108,7 +109,7 @@ export class AuthController {
         }
     }
 
-    @Put('user/password')
+    @Put(['admin/user/password','ambassador/user/password'])
     @UseGuards(AuthGuard)
     async updatePassword(
         @Req() request: Request,
@@ -132,7 +133,7 @@ export class AuthController {
         }
     }
 
-    @Post('logout')
+    @Post(['admin/logout','ambassador/logout'])
     @UseGuards(AuthGuard)
     async logout(@Res({ passthrough: true }) response: Response) {
         try {
