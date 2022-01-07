@@ -69,8 +69,8 @@ export class AuthController {
         }
     }
 
-    @UseGuards(AuthGuard)
     @Get('user')
+    @UseGuards(AuthGuard)
     async user(@Req() request: Request) {
         try{
             const cookie = request.cookies.jwt
@@ -86,8 +86,8 @@ export class AuthController {
 
     }
 
-    @UseGuards(AuthGuard)
     @Put('user/info')
+    @UseGuards(AuthGuard)
     async updateInfo(
         @Req() request: Request,
         @Body('first_name') first_name: string,
@@ -108,8 +108,8 @@ export class AuthController {
         }
     }
 
-    @UseGuards(AuthGuard)
     @Put('user/password')
+    @UseGuards(AuthGuard)
     async updatePassword(
         @Req() request: Request,
         @Body('password') password: string,
@@ -132,8 +132,8 @@ export class AuthController {
         }
     }
 
-    @UseGuards(AuthGuard)
     @Post('logout')
+    @UseGuards(AuthGuard)
     async logout(@Res({ passthrough: true }) response: Response) {
         try {
             response.clearCookie('jwt')

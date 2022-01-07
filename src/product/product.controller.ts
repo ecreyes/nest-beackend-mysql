@@ -1,4 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common'
+
+import { AuthGuard } from '../auth/auth.guard'
 
 import { ProductCreateDto } from './dtos/product-create.dto'
 import { ProductService } from './product.service'
@@ -10,6 +12,7 @@ export class ProductController {
     }
 
     @Get('admin/products')
+    @UseGuards(AuthGuard)
     async all() {
         try {
             return await this.productService.find({})
@@ -21,6 +24,7 @@ export class ProductController {
     }
 
     @Post('admin/products')
+    @UseGuards(AuthGuard)
     async create(@Body() body:ProductCreateDto) {
         try {
             return await this.productService.save(body)
@@ -32,6 +36,7 @@ export class ProductController {
     }
 
     @Get('admin/products/:id')
+    @UseGuards(AuthGuard)
     async get(@Param('id') id: number) {
         try {
             return await this.productService.findOne({ id })
@@ -43,6 +48,7 @@ export class ProductController {
     }
 
     @Put('admin/products/:id')
+    @UseGuards(AuthGuard)
     async put(@Param('id') id: number, @Body() body:ProductCreateDto) {
         try {
             await this.productService.update(id, body)
@@ -56,6 +62,7 @@ export class ProductController {
     }
 
     @Delete('admin/products/:id')
+    @UseGuards(AuthGuard)
     async delete(@Param('id') id: number) {
         try {
             return await this.productService.delete(id)

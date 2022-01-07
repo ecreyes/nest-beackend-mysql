@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 
-import { DatabaseModule } from '../database/database.module'
+import { SharedModule } from '../shared/shared.module'
 
 import { OrderController } from './order.controller'
 import { orderProviders } from './order.providers'
@@ -9,7 +9,7 @@ import { OrderItemService } from './order-item.service'
 
 @Module({
   imports:[
-    DatabaseModule,
+    SharedModule,
   ],
   controllers: [OrderController],
   providers: [

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 
-import { DatabaseModule } from 'src/database/database.module'
+import { SharedModule } from '../shared/shared.module'
 
 import { LinkController } from './link.controller'
 import { linkProviders } from './link.providers'
@@ -8,7 +8,7 @@ import { LinkService } from './link.service'
 
 @Module({
   imports: [
-    DatabaseModule,
+    SharedModule,
   ],
   controllers: [LinkController],
   providers: [
